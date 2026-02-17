@@ -59,7 +59,7 @@ public struct SimpleFormActionButtons: View {
                     title: resetTitle,
                     systemImage: "arrow.uturn.backward.circle.fill",
                     tint: .orange,
-                    style: .bordered,
+                    style: .filled,
                     action: onReset
                 )
             }
