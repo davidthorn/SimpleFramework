@@ -268,7 +268,7 @@ public struct SimpleDateTimeInputCard: View {
 
                     SimpleDateTimeInputCard(
                         date: $inlineDate,
-                        title: "Inline Edi tor",
+                        title: "Inline Editor",
                         subtitle: "Date and time editor is rendered inline.",
                         icon: "calendar",
                         accent: .orange,
