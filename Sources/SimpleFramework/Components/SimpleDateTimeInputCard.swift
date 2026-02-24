@@ -15,6 +15,7 @@ public struct SimpleDateTimeInputCard: View {
 
     @Binding public var date: Date
     @State private var isEditorPresented: Bool
+    @State private var hasInlineBeenHiddenToSheetMode: Bool
 
     public let title: String
     public let subtitle: String
@@ -28,11 +29,11 @@ public struct SimpleDateTimeInputCard: View {
         subtitle: String = "Adjust when this entry was captured.",
         icon: String = "calendar.badge.clock",
         accent: Color = .accentColor,
-        presentationStyle: EditorPresentationStyle = .sheet,
-        startsExpanded: Bool = false
+        presentationStyle: EditorPresentationStyle = .sheet
     ) {
         _date = date
-        _isEditorPresented = State(initialValue: presentationStyle == .inline && startsExpanded)
+        _isEditorPresented = State(initialValue: presentationStyle == .inline)
+        _hasInlineBeenHiddenToSheetMode = State(initialValue: false)
         self.title = title
         self.subtitle = subtitle
         self.icon = icon
@@ -42,21 +43,16 @@ public struct SimpleDateTimeInputCard: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Button {
-                switch presentationStyle {
-                case .sheet:
+            if activePresentationStyle == .sheet {
+                Button {
                     isEditorPresented = true
-                case .inline:
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        isEditorPresented.toggle()
-                    }
+                } label: {
+                    triggerRow
                 }
-            } label: {
-                triggerRow
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
-
-            if presentationStyle == .inline, isEditorPresented {
+           
+            if activePresentationStyle == .inline, isEditorPresented {
                 inlineEditor
                     .transition(.opacity.combined(with: .move(edge: .top)))
             }
@@ -120,7 +116,7 @@ public struct SimpleDateTimeInputCard: View {
 
     private var inlineEditor: some View {
         VStack(alignment: .leading, spacing: 14) {
-            header
+            header(showHideButton: true)
             editorContent
         }
         .padding(12)
@@ -159,7 +155,7 @@ public struct SimpleDateTimeInputCard: View {
     private var sheetEditor: some View {
         NavigationStack {
             VStack(alignment: .leading, spacing: 14) {
-                header
+                header(showHideButton: false)
                 editorContent
                 Spacer()
             }
@@ -178,16 +174,13 @@ public struct SimpleDateTimeInputCard: View {
     }
 
     private var editButtonTitle: String {
-        if presentationStyle == .inline, isEditorPresented {
-            return "Hide"
-        }
         return "Edit"
     }
 
     private var isSheetPresentedBinding: Binding<Bool> {
         Binding(
             get: {
-                presentationStyle == .sheet && isEditorPresented
+                activePresentationStyle == .sheet && isEditorPresented
             },
             set: { isPresented in
                 isEditorPresented = isPresented
@@ -195,7 +188,11 @@ public struct SimpleDateTimeInputCard: View {
         )
     }
 
-    private var header: some View {
+    private var activePresentationStyle: EditorPresentationStyle {
+        hasInlineBeenHiddenToSheetMode ? .sheet : presentationStyle
+    }
+
+    private func header(showHideButton: Bool) -> some View {
         HStack(alignment: .top, spacing: 10) {
             Image(systemName: icon)
                 .font(.subheadline.weight(.bold))
@@ -214,6 +211,24 @@ public struct SimpleDateTimeInputCard: View {
                     .foregroundStyle(.secondary)
             }
             Spacer()
+
+            if showHideButton {
+                Button("Done") {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        isEditorPresented = false
+                    }
+                    hasInlineBeenHiddenToSheetMode = true
+                }
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(accent)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 5)
+                .background(
+                    Capsule(style: .continuous)
+                        .fill(accent.opacity(0.14))
+                )
+                .buttonStyle(.plain)
+            }
         }
         .padding(14)
         .background(
@@ -253,12 +268,11 @@ public struct SimpleDateTimeInputCard: View {
 
                     SimpleDateTimeInputCard(
                         date: $inlineDate,
-                        title: "Inline Editor",
+                        title: "Inline Edi tor",
                         subtitle: "Date and time editor is rendered inline.",
                         icon: "calendar",
                         accent: .orange,
-                        presentationStyle: .inline,
-                        startsExpanded: true
+                        presentationStyle: .inline
                     )
                 }
                 .frame(maxWidth: .infinity, alignment: .top)
