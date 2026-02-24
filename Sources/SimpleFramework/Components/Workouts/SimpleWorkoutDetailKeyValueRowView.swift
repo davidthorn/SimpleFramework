@@ -1,0 +1,47 @@
+//
+//  SimpleWorkoutDetailKeyValueRowView.swift
+//  SimpleFramework
+//
+//  Created by David Thorn on 22.02.2026.
+//
+
+import SwiftUI
+
+/// A title/value row used in workout detail cards.
+public struct SimpleWorkoutDetailKeyValueRowView: View {
+    private let title: String
+    private let value: String
+
+    /// Creates a key/value row.
+    public init(title: String, value: String) {
+        self.title = title
+        self.value = value
+    }
+
+    public var body: some View {
+        HStack {
+            Text(title)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+
+            Spacer()
+
+            Text(value)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.primary)
+        }
+        .padding(12)
+        .background(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .fill(Color.secondary.opacity(0.08))
+        )
+    }
+}
+
+#if DEBUG
+#Preview {
+    SimpleWorkoutDetailKeyValueRowView(title: "Start", value: "Feb 3, 6:40 PM")
+        .padding()
+        .background(Color.secondary.opacity(0.12))
+}
+#endif
