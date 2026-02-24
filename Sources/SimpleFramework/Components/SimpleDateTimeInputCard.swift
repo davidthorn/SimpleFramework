@@ -8,6 +8,11 @@
 import SwiftUI
 
 public struct SimpleDateTimeInputCard: View {
+    public enum EditorPresentationStyle: Sendable {
+        case sheet
+        case inline
+    }
+
     @Binding public var date: Date
     @State private var isEditorPresented: Bool
 
@@ -15,112 +20,49 @@ public struct SimpleDateTimeInputCard: View {
     public let subtitle: String
     public let icon: String
     public let accent: Color
+    public let presentationStyle: EditorPresentationStyle
 
     public init(
         date: Binding<Date>,
         title: String = "Date & Time",
         subtitle: String = "Adjust when this entry was captured.",
         icon: String = "calendar.badge.clock",
-        accent: Color = .accentColor
+        accent: Color = .accentColor,
+        presentationStyle: EditorPresentationStyle = .sheet,
+        startsExpanded: Bool = false
     ) {
         _date = date
-        _isEditorPresented = State(initialValue: false)
+        _isEditorPresented = State(initialValue: presentationStyle == .inline && startsExpanded)
         self.title = title
         self.subtitle = subtitle
         self.icon = icon
         self.accent = accent
+        self.presentationStyle = presentationStyle
     }
 
     public var body: some View {
-        Button {
-            isEditorPresented = true
-        } label: {
-            HStack(spacing: 10) {
-                Image(systemName: icon)
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(accent)
-                    .frame(width: 28, height: 28)
-                    .background(
-                        Circle()
-                            .fill(accent.opacity(0.14))
-                    )
-
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(date.formatted(date: .abbreviated, time: .omitted))
-                        .font(.subheadline.weight(.semibold))
-                    Text(date.formatted(date: .omitted, time: .shortened))
-                        .font(.caption.weight(.medium))
-                        .foregroundStyle(.secondary)
+        VStack(alignment: .leading, spacing: 10) {
+            Button {
+                switch presentationStyle {
+                case .sheet:
+                    isEditorPresented = true
+                case .inline:
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        isEditorPresented.toggle()
+                    }
                 }
-
-                Spacer()
-
-                Text("Edit")
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(accent)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 5)
-                    .background(
-                        Capsule(style: .continuous)
-                            .fill(accent.opacity(0.14))
-                    )
+            } label: {
+                triggerRow
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 10)
-            .background(
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(Color.white.opacity(0.75))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .stroke(Color.primary.opacity(0.1), lineWidth: 1)
-                    )
-            )
+            .buttonStyle(.plain)
+
+            if presentationStyle == .inline, isEditorPresented {
+                inlineEditor
+                    .transition(.opacity.combined(with: .move(edge: .top)))
+            }
         }
-        .buttonStyle(.plain)
-        .sheet(isPresented: $isEditorPresented) {
-            NavigationStack {
-                VStack(alignment: .leading, spacing: 14) {
-                    header
-
-                    VStack(alignment: .leading, spacing: 10) {
-                        titleLabel("Date")
-                        DatePicker("Date", selection: $date, displayedComponents: .date)
-                            .datePickerStyle(.graphical)
-                            .labelsHidden()
-                    }
-                    .padding(14)
-                    .background(cardBackground)
-
-                    VStack(alignment: .leading, spacing: 10) {
-                        titleLabel("Time")
-                        DatePicker("Time", selection: $date, displayedComponents: .hourAndMinute)
-#if os(macOS)
-                            .datePickerStyle(.field)
-#else
-                            .datePickerStyle(.wheel)
-#endif
-                            .labelsHidden()
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 150)
-                            .clipped()
-                    }
-                    .padding(14)
-                    .background(cardBackground)
-
-                    Spacer()
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 12)
-                .toolbar {
-                    ToolbarItem(placement: doneToolbarPlacement) {
-                        Button("Done") {
-                            isEditorPresented = false
-                        }
-                        .font(.subheadline.weight(.semibold))
-                    }
-                }
-            }
-            .tint(accent)
+        .sheet(isPresented: isSheetPresentedBinding) {
+            sheetEditor
         }
     }
 
@@ -131,6 +73,126 @@ public struct SimpleDateTimeInputCard: View {
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
                     .stroke(Color.primary.opacity(0.08), lineWidth: 1)
             )
+    }
+
+    private var triggerRow: some View {
+        HStack(spacing: 10) {
+            Image(systemName: icon)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(accent)
+                .frame(width: 28, height: 28)
+                .background(
+                    Circle()
+                        .fill(accent.opacity(0.14))
+                )
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(date.formatted(date: .abbreviated, time: .omitted))
+                    .font(.subheadline.weight(.semibold))
+                Text(date.formatted(date: .omitted, time: .shortened))
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(.secondary)
+            }
+
+            Spacer()
+
+            Text(editButtonTitle)
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(accent)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 5)
+                .background(
+                    Capsule(style: .continuous)
+                        .fill(accent.opacity(0.14))
+                )
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 10)
+        .background(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .fill(Color.white.opacity(0.75))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .stroke(Color.primary.opacity(0.1), lineWidth: 1)
+                )
+        )
+    }
+
+    private var inlineEditor: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            header
+            editorContent
+        }
+        .padding(12)
+        .background(cardBackground)
+    }
+
+    private var editorContent: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            VStack(alignment: .leading, spacing: 10) {
+                titleLabel("Date")
+                DatePicker("Date", selection: $date, displayedComponents: .date)
+                    .datePickerStyle(.graphical)
+                    .labelsHidden()
+            }
+            .padding(14)
+            .background(cardBackground)
+
+            VStack(alignment: .leading, spacing: 10) {
+                titleLabel("Time")
+                DatePicker("Time", selection: $date, displayedComponents: .hourAndMinute)
+#if os(macOS)
+                    .datePickerStyle(.field)
+#else
+                    .datePickerStyle(.wheel)
+#endif
+                    .labelsHidden()
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 150)
+                    .clipped()
+            }
+            .padding(14)
+            .background(cardBackground)
+        }
+    }
+
+    private var sheetEditor: some View {
+        NavigationStack {
+            VStack(alignment: .leading, spacing: 14) {
+                header
+                editorContent
+                Spacer()
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .toolbar {
+                ToolbarItem(placement: doneToolbarPlacement) {
+                    Button("Done") {
+                        isEditorPresented = false
+                    }
+                    .font(.subheadline.weight(.semibold))
+                }
+            }
+        }
+        .tint(accent)
+    }
+
+    private var editButtonTitle: String {
+        if presentationStyle == .inline, isEditorPresented {
+            return "Hide"
+        }
+        return "Edit"
+    }
+
+    private var isSheetPresentedBinding: Binding<Bool> {
+        Binding(
+            get: {
+                presentationStyle == .sheet && isEditorPresented
+            },
+            set: { isPresented in
+                isEditorPresented = isPresented
+            }
+        )
     }
 
     private var header: some View {
@@ -182,10 +244,26 @@ public struct SimpleDateTimeInputCard: View {
 #if DEBUG
     private struct SimpleDateTimeInputCardPreviewHost: View {
         @State private var date: Date = .now
+        @State private var inlineDate: Date = .now.addingTimeInterval(3_600)
 
         var body: some View {
-            SimpleDateTimeInputCard(date: $date)
+            ScrollView {
+                VStack(spacing: 12) {
+                    SimpleDateTimeInputCard(date: $date)
+
+                    SimpleDateTimeInputCard(
+                        date: $inlineDate,
+                        title: "Inline Editor",
+                        subtitle: "Date and time editor is rendered inline.",
+                        icon: "calendar",
+                        accent: .orange,
+                        presentationStyle: .inline,
+                        startsExpanded: true
+                    )
+                }
+                .frame(maxWidth: .infinity, alignment: .top)
                 .padding()
+            }
         }
     }
 
