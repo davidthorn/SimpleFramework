@@ -93,7 +93,7 @@ public struct SimpleDestructiveConfirmationCard: View {
         SimpleDestructiveConfirmationCard(
             title: "Delete this item?",
             message: "This action cannot be undone.",
-            confirmTitle: "Delete Item",
+            confirmTitle: "Delete",
             onCancel: {},
             onConfirm: {}
         )
