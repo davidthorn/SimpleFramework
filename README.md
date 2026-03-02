@@ -116,7 +116,50 @@ SimpleRouteRow(
 )
 ```
 
-### 2) Route map rendering (activity-agnostic)
+### 2) Form fields: primitives vs wrapped cards
+
+The field APIs are intentionally split into two layers.
+
+- `Form*` components are the lower-level form primitives.
+- `Simple*` components are wrapper components that add the outer card/section treatment used by the apps.
+
+Use the `Form*` layer when you need direct control over form composition:
+
+- `FormTextFieldRowView`
+- `FormTextEditorRowView`
+- `FormFieldLabelView`
+- `FormTextFieldRowStyle`
+- `FormTextEditorRowStyle`
+
+These types own:
+
+- the label row
+- optional `description`
+- optional `trailingLabel`
+- validation message
+- input behavior and input styling
+
+They do not own the outer padded card wrapper.
+
+Use the `Simple*` layer when you want the shared app-ready card presentation without rebuilding the wrapper each time:
+
+- `SimpleLabeledTextFieldCard`
+- `SimpleLabeledTextEditorCard`
+
+These wrappers sit on top of the `Form*` primitives and add:
+
+- outer padding
+- outer card background
+- outer card border treatment
+- the simpler app-facing API used in most screens
+
+Rule of thumb:
+
+1. Use `Form*` when building form layouts directly.
+2. Use `Simple*` when you want the standard shared card look.
+3. If a field and editor should visually match in app screens, use the matching `Simple*` wrappers together.
+
+### 3) Route map rendering (activity-agnostic)
 
 Use `RoutePoint` for route coordinates and `MapRouteView` for map drawing.
 
@@ -153,7 +196,7 @@ MapExpandableRouteView(
 )
 ```
 
-### 3) HealthKit permissions and auto-sync UI
+### 4) HealthKit permissions and auto-sync UI
 
 Use shared cards to keep permission and sync UX consistent across apps.
 
@@ -174,7 +217,7 @@ SimpleHealthKitAutoSyncCard(
 )
 ```
 
-### 4) JSON persistence
+### 5) JSON persistence
 
 Use `JSONEntityStore` for `Identifiable` entity collections and `JSONValueStore` for singular values.
 

@@ -1,13 +1,13 @@
 //
-//  FormTextFieldRowStyle.swift
+//  FormTextEditorRowStyle.swift
 //  SimpleFramework
 //
-//  Created by David Thorn on 28.02.26.
+//  Created by David Thorn on 01.03.2026.
 //
 
 import SwiftUI
 
-public struct FormTextFieldRowStyle: Sendable {
+public struct FormTextEditorRowStyle: Sendable {
     public let labelStyle: FormFieldLabelStyle
     public let contentSpacing: CGFloat
     public let textFont: Font
@@ -17,7 +17,7 @@ public struct FormTextFieldRowStyle: Sendable {
     public let validationFont: Font
     public let inputHorizontalPadding: CGFloat
     public let inputVerticalPadding: CGFloat
-    public let minimumFieldHeight: CGFloat
+    public let minimumEditorHeight: CGFloat
     public let cornerRadius: CGFloat
     public let backgroundTopColor: Color
     public let backgroundBottomColor: Color
@@ -42,7 +42,7 @@ public struct FormTextFieldRowStyle: Sendable {
         validationFont: Font,
         inputHorizontalPadding: CGFloat,
         inputVerticalPadding: CGFloat,
-        minimumFieldHeight: CGFloat,
+        minimumEditorHeight: CGFloat,
         cornerRadius: CGFloat,
         backgroundTopColor: Color,
         backgroundBottomColor: Color,
@@ -66,7 +66,7 @@ public struct FormTextFieldRowStyle: Sendable {
         self.validationFont = validationFont
         self.inputHorizontalPadding = inputHorizontalPadding
         self.inputVerticalPadding = inputVerticalPadding
-        self.minimumFieldHeight = minimumFieldHeight
+        self.minimumEditorHeight = minimumEditorHeight
         self.cornerRadius = cornerRadius
         self.backgroundTopColor = backgroundTopColor
         self.backgroundBottomColor = backgroundBottomColor
@@ -104,7 +104,7 @@ public struct FormTextFieldRowStyle: Sendable {
         }
     }
 
-    public static let `default` = FormTextFieldRowStyle(
+    public static let `default` = FormTextEditorRowStyle(
         labelStyle: .default,
         contentSpacing: 10,
         textFont: .body.weight(.medium),
@@ -114,7 +114,7 @@ public struct FormTextFieldRowStyle: Sendable {
         validationFont: .caption.weight(.medium),
         inputHorizontalPadding: 16,
         inputVerticalPadding: 14,
-        minimumFieldHeight: 52,
+        minimumEditorHeight: 144,
         cornerRadius: 10,
         backgroundTopColor: .white.opacity(0.88),
         backgroundBottomColor: .primary.opacity(0.03),
@@ -139,8 +139,8 @@ public struct FormTextFieldRowStyle: Sendable {
         shadowYOffset: 4
     )
 
-    public static func simpleCard(tint: Color) -> FormTextFieldRowStyle {
-        FormTextFieldRowStyle(
+    public static func simpleCard(tint: Color) -> FormTextEditorRowStyle {
+        FormTextEditorRowStyle(
             labelStyle: FormFieldLabelStyle(
                 spacing: 0,
                 titleFont: .caption.weight(.bold),
@@ -160,8 +160,8 @@ public struct FormTextFieldRowStyle: Sendable {
             placeholderColor: .secondary,
             validationFont: .footnote,
             inputHorizontalPadding: 12,
-            inputVerticalPadding: 10,
-            minimumFieldHeight: 44,
+            inputVerticalPadding: 14,
+            minimumEditorHeight: 140,
             cornerRadius: 10,
             backgroundTopColor: .white.opacity(0.75),
             backgroundBottomColor: .white.opacity(0.75),

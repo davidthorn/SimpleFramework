@@ -9,13 +9,13 @@ import SwiftUI
 
 public struct FormFieldLabelView: View {
     internal let title: String
-    internal let description: String
+    internal let description: String?
     internal let trailingLabel: String?
     internal let style: FormFieldLabelStyle
 
     public init(
         title: String,
-        description: String,
+        description: String? = nil,
         trailingLabel: String? = nil,
         style: FormFieldLabelStyle = .default
     ) {
@@ -42,9 +42,11 @@ public struct FormFieldLabelView: View {
                         .clipShape(Capsule())
                 }
             }
-            Text(description)
-                .font(style.descriptionFont)
-                .foregroundStyle(style.descriptionColor)
+            if let description, description.isEmpty == false {
+                Text(description)
+                    .font(style.descriptionFont)
+                    .foregroundStyle(style.descriptionColor)
+            }
         }
     }
 }

@@ -9,22 +9,26 @@ import SwiftUI
 
 public struct FormTextFieldRowView: View {
     internal let title: String
-    internal let description: String
+    internal let description: String?
     internal let trailingLabel: String?
     internal let placeholder: String
     internal let validationMessage: String?
     internal let validationState: FormFieldValidationState
     internal let style: FormTextFieldRowStyle
+    internal let keyboardKind: FormKeyboardKind
+    internal let isEnabled: Bool
     @Binding internal var text: String
 
     public init(
         title: String,
-        description: String,
+        description: String? = nil,
         trailingLabel: String? = nil,
         placeholder: String,
         validationMessage: String? = nil,
         validationState: FormFieldValidationState = .normal,
         style: FormTextFieldRowStyle = .default,
+        keyboardKind: FormKeyboardKind = .default,
+        isEnabled: Bool = true,
         text: Binding<String>
     ) {
         self.title = title
@@ -34,6 +38,8 @@ public struct FormTextFieldRowView: View {
         self.validationMessage = validationMessage
         self.validationState = validationState
         self.style = style
+        self.keyboardKind = keyboardKind
+        self.isEnabled = isEnabled
         self._text = text
     }
 
@@ -46,22 +52,9 @@ public struct FormTextFieldRowView: View {
                 style: style.labelStyle
             )
 
-            TextField(
-                "",
-                text: $text,
-                prompt: Text(placeholder)
-                    .font(style.placeholderFont)
-                    .foregroundColor(style.placeholderColor)
-            )
-                .font(style.textFont)
-                .foregroundStyle(style.textColor)
-                .textFieldStyle(.plain)
-                .padding(.horizontal, style.inputHorizontalPadding)
-                .padding(.vertical, style.inputVerticalPadding)
-                .frame(minHeight: style.minimumFieldHeight)
-                .background(inputBackground)
-                .overlay(inputBorder)
-                .shadow(color: style.shadowColor, radius: style.shadowRadius, y: style.shadowYOffset)
+            inputField
+                .disabled(isEnabled == false)
+                .opacity(isEnabled ? 1 : 0.6)
 
             if let validationMessage, validationMessage.isEmpty == false {
                 Text(validationMessage)
@@ -96,6 +89,43 @@ public struct FormTextFieldRowView: View {
                 ),
                 lineWidth: style.borderLineWidth
             )
+    }
+
+    @ViewBuilder
+    private var inputField: some View {
+        #if canImport(UIKit)
+            switch keyboardKind {
+            case .default:
+                baseTextField
+            case .numberPad:
+                baseTextField
+                    .keyboardType(.numberPad)
+            case .decimalPad:
+                baseTextField
+                    .keyboardType(.decimalPad)
+            }
+        #else
+            baseTextField
+        #endif
+    }
+
+    private var baseTextField: some View {
+        TextField(
+            "",
+            text: $text,
+            prompt: Text(placeholder)
+                .font(style.placeholderFont)
+                .foregroundColor(style.placeholderColor)
+        )
+        .font(style.textFont)
+        .foregroundStyle(style.textColor)
+        .textFieldStyle(.plain)
+        .padding(.horizontal, style.inputHorizontalPadding)
+        .padding(.vertical, style.inputVerticalPadding)
+        .frame(minHeight: style.minimumFieldHeight)
+        .background(inputBackground)
+        .overlay(inputBorder)
+        .shadow(color: style.shadowColor, radius: style.shadowRadius, y: style.shadowYOffset)
     }
 }
 

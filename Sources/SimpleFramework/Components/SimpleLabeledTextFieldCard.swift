@@ -8,12 +8,6 @@
 import SwiftUI
 
 public struct SimpleLabeledTextFieldCard: View {
-    public enum KeyboardKind: Sendable {
-        case `default`
-        case numberPad
-        case decimalPad
-    }
-
     @Binding public var text: String
 
     public let title: String
@@ -21,7 +15,7 @@ public struct SimpleLabeledTextFieldCard: View {
     public let helperText: String?
     public let tint: Color
     public let isEnabled: Bool
-    public let keyboardKind: KeyboardKind
+    public let keyboardKind: FormKeyboardKind
 
     public init(
         text: Binding<String>,
@@ -30,7 +24,7 @@ public struct SimpleLabeledTextFieldCard: View {
         helperText: String? = nil,
         tint: Color = .accentColor,
         isEnabled: Bool = true,
-        keyboardKind: KeyboardKind = .default
+        keyboardKind: FormKeyboardKind = .default
     ) {
         _text = text
         self.title = title
@@ -42,44 +36,19 @@ public struct SimpleLabeledTextFieldCard: View {
     }
 
     public var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text(title.uppercased())
-                .font(.caption.weight(.bold))
-                .foregroundStyle(.secondary)
-
-            textField
-                .padding(.horizontal, 12)
-                .padding(.vertical, 10)
-                .background(inputBackground)
-                .disabled(isEnabled == false)
-
-            if let helperText {
-                Text(helperText)
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-            }
-        }
+        FormTextFieldRowView(
+            title: title.uppercased(),
+            description: "",
+            placeholder: placeholder,
+            validationMessage: helperText,
+            style: .simpleCard(tint: tint),
+            keyboardKind: keyboardKind,
+            isEnabled: isEnabled,
+            text: $text
+        )
         .padding(14)
         .background(cardBackground)
         .opacity(isEnabled ? 1 : 0.6)
-    }
-
-    @ViewBuilder
-    private var textField: some View {
-        #if canImport(UIKit)
-            switch keyboardKind {
-            case .default:
-                TextField(placeholder, text: $text)
-            case .numberPad:
-                TextField(placeholder, text: $text)
-                    .keyboardType(.numberPad)
-            case .decimalPad:
-                TextField(placeholder, text: $text)
-                    .keyboardType(.decimalPad)
-            }
-        #else
-            TextField(placeholder, text: $text)
-        #endif
     }
 
     private var cardBackground: some View {
@@ -91,14 +60,6 @@ public struct SimpleLabeledTextFieldCard: View {
             )
     }
 
-    private var inputBackground: some View {
-        RoundedRectangle(cornerRadius: 10, style: .continuous)
-            .fill(Color.white.opacity(0.75))
-            .overlay(
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .stroke(Color.primary.opacity(0.1), lineWidth: 1)
-            )
-    }
 }
 
 #if DEBUG
