@@ -14,6 +14,7 @@ public struct SimpleDateTimeInputCard: View {
     }
 
     @Binding public var date: Date
+    @Binding public var isActive: Bool
     @State private var isEditorPresented: Bool
     @State private var hasInlineBeenHiddenToSheetMode: Bool
 
@@ -22,6 +23,7 @@ public struct SimpleDateTimeInputCard: View {
     public let icon: String
     public let accent: Color
     public let presentationStyle: EditorPresentationStyle
+    public let showsToggle: Bool
 
     public init(
         date: Binding<Date>,
@@ -32,6 +34,7 @@ public struct SimpleDateTimeInputCard: View {
         presentationStyle: EditorPresentationStyle = .sheet
     ) {
         _date = date
+        _isActive = .constant(true)
         _isEditorPresented = State(initialValue: presentationStyle == .inline)
         _hasInlineBeenHiddenToSheetMode = State(initialValue: false)
         self.title = title
@@ -39,26 +42,60 @@ public struct SimpleDateTimeInputCard: View {
         self.icon = icon
         self.accent = accent
         self.presentationStyle = presentationStyle
+        self.showsToggle = false
+    }
+
+    public init(
+        isActive: Binding<Bool>,
+        date: Binding<Date>,
+        title: String = "Date & Time",
+        subtitle: String = "Adjust when this entry was captured.",
+        icon: String = "calendar.badge.clock",
+        accent: Color = .accentColor,
+        presentationStyle: EditorPresentationStyle = .sheet
+    ) {
+        _date = date
+        _isActive = isActive
+        _isEditorPresented = State(initialValue: presentationStyle == .inline && isActive.wrappedValue)
+        _hasInlineBeenHiddenToSheetMode = State(initialValue: false)
+        self.title = title
+        self.subtitle = subtitle
+        self.icon = icon
+        self.accent = accent
+        self.presentationStyle = presentationStyle
+        self.showsToggle = true
     }
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            if activePresentationStyle == .sheet {
+            if isActive, activePresentationStyle == .sheet {
                 Button {
                     isEditorPresented = true
                 } label: {
-                    triggerRow
+                    headerCard
                 }
                 .buttonStyle(.plain)
+            } else {
+                headerCard
             }
            
-            if activePresentationStyle == .inline, isEditorPresented {
-                inlineEditor
+            if isActive, activePresentationStyle == .inline, isEditorPresented {
+                editorContent
+                    .padding(12)
+                    .background(cardBackground)
                     .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
         .sheet(isPresented: isSheetPresentedBinding) {
             sheetEditor
+        }
+        .onChange(of: isActive) { _, newValue in
+            if newValue {
+                isEditorPresented = presentationStyle == .inline
+            } else {
+                isEditorPresented = false
+                hasInlineBeenHiddenToSheetMode = false
+            }
         }
     }
 
@@ -69,58 +106,6 @@ public struct SimpleDateTimeInputCard: View {
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
                     .stroke(Color.primary.opacity(0.08), lineWidth: 1)
             )
-    }
-
-    private var triggerRow: some View {
-        HStack(spacing: 10) {
-            Image(systemName: icon)
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(accent)
-                .frame(width: 28, height: 28)
-                .background(
-                    Circle()
-                        .fill(accent.opacity(0.14))
-                )
-
-            VStack(alignment: .leading, spacing: 2) {
-                Text(date.formatted(date: .abbreviated, time: .omitted))
-                    .font(.subheadline.weight(.semibold))
-                Text(date.formatted(date: .omitted, time: .shortened))
-                    .font(.caption.weight(.medium))
-                    .foregroundStyle(.secondary)
-            }
-
-            Spacer()
-
-            Text(editButtonTitle)
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(accent)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 5)
-                .background(
-                    Capsule(style: .continuous)
-                        .fill(accent.opacity(0.14))
-                )
-        }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 10)
-        .background(
-            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .fill(Color.white.opacity(0.75))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .stroke(Color.primary.opacity(0.1), lineWidth: 1)
-                )
-        )
-    }
-
-    private var inlineEditor: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            header(showHideButton: true)
-            editorContent
-        }
-        .padding(12)
-        .background(cardBackground)
     }
 
     private var editorContent: some View {
@@ -155,7 +140,7 @@ public struct SimpleDateTimeInputCard: View {
     private var sheetEditor: some View {
         NavigationStack {
             VStack(alignment: .leading, spacing: 14) {
-                header(showHideButton: false)
+                header(showHideButton: false, showsToggleControl: false)
                 editorContent
                 Spacer()
             }
@@ -180,7 +165,7 @@ public struct SimpleDateTimeInputCard: View {
     private var isSheetPresentedBinding: Binding<Bool> {
         Binding(
             get: {
-                activePresentationStyle == .sheet && isEditorPresented
+                isActive && activePresentationStyle == .sheet && isEditorPresented
             },
             set: { isPresented in
                 isEditorPresented = isPresented
@@ -192,42 +177,84 @@ public struct SimpleDateTimeInputCard: View {
         hasInlineBeenHiddenToSheetMode ? .sheet : presentationStyle
     }
 
-    private func header(showHideButton: Bool) -> some View {
-        HStack(alignment: .top, spacing: 10) {
-            Image(systemName: icon)
-                .font(.subheadline.weight(.bold))
-                .foregroundStyle(accent)
-                .padding(9)
-                .background(
-                    Circle()
-                        .fill(accent.opacity(0.14))
-                )
+    private var headerCard: some View {
+        header(
+            showHideButton: isActive && activePresentationStyle == .inline && isEditorPresented,
+            showsToggleControl: showsToggle
+        )
+    }
 
-            VStack(alignment: .leading, spacing: 3) {
-                Text(title)
-                    .font(.headline)
-                Text(subtitle)
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-            }
-            Spacer()
+    private func header(showHideButton: Bool, showsToggleControl: Bool) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .top, spacing: 12) {
+                Image(systemName: icon)
+                    .font(.subheadline.weight(.bold))
+                    .foregroundStyle(accent)
+                    .padding(9)
+                    .background(
+                        Circle()
+                            .fill(accent.opacity(0.14))
+                    )
 
-            if showHideButton {
-                Button("Done") {
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        isEditorPresented = false
-                    }
-                    hasInlineBeenHiddenToSheetMode = true
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(title)
+                        .font(.headline)
+                    Text(subtitle)
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
                 }
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(accent)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 5)
-                .background(
-                    Capsule(style: .continuous)
-                        .fill(accent.opacity(0.14))
-                )
-                .buttonStyle(.plain)
+
+                Spacer(minLength: 12)
+
+                if showHideButton {
+                    Button("Done") {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            isEditorPresented = false
+                        }
+                        hasInlineBeenHiddenToSheetMode = true
+                    }
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 5)
+                    .background(
+                        Capsule(style: .continuous)
+                            .fill(accent.opacity(0.14))
+                    )
+                    .buttonStyle(.plain)
+                } else if showsToggleControl {
+                    Toggle("", isOn: $isActive)
+                        .labelsHidden()
+                }
+            }
+
+            if isActive {
+                HStack(alignment: .center, spacing: 12) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(date.formatted(date: .abbreviated, time: .omitted))
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(.primary)
+                        Text(date.formatted(date: .omitted, time: .shortened))
+                            .font(.caption.weight(.medium))
+                            .foregroundStyle(.secondary)
+                    }
+
+                    Spacer(minLength: 12)
+
+                    if showHideButton == false {
+                        Text(editButtonTitle)
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(accent)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 6)
+                            .background(
+                                Capsule(style: .continuous)
+                                    .fill(accent.opacity(0.14))
+                            )
+                    }
+                }
+                .padding(.leading, 46)
+                .padding(.top, 2)
             }
         }
         .padding(14)
@@ -259,12 +286,23 @@ public struct SimpleDateTimeInputCard: View {
 #if DEBUG
     private struct SimpleDateTimeInputCardPreviewHost: View {
         @State private var date: Date = .now
+        @State private var optionalDateIsActive: Bool = true
         @State private var inlineDate: Date = .now.addingTimeInterval(3_600)
 
         var body: some View {
             ScrollView {
                 VStack(spacing: 12) {
                     SimpleDateTimeInputCard(date: $date)
+
+                    SimpleDateTimeInputCard(
+                        isActive: $optionalDateIsActive,
+                        date: $date,
+                        title: "Optional Date",
+                        subtitle: "Single card with integrated toggle and editor trigger.",
+                        icon: "calendar.badge.clock",
+                        accent: .blue,
+                        presentationStyle: .sheet
+                    )
 
                     SimpleDateTimeInputCard(
                         date: $inlineDate,
