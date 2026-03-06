@@ -24,6 +24,7 @@ public struct SimpleDateTimeInputCard: View {
     public let accent: Color
     public let presentationStyle: EditorPresentationStyle
     public let showsToggle: Bool
+    public let editButtonTitle: String
 
     public init(
         date: Binding<Date>,
@@ -43,6 +44,29 @@ public struct SimpleDateTimeInputCard: View {
         self.accent = accent
         self.presentationStyle = presentationStyle
         self.showsToggle = false
+        self.editButtonTitle = "Edit"
+    }
+
+    public init(
+        date: Binding<Date>,
+        title: String = "Date & Time",
+        subtitle: String = "Adjust when this entry was captured.",
+        icon: String = "calendar.badge.clock",
+        accent: Color = .accentColor,
+        presentationStyle: EditorPresentationStyle = .sheet,
+        editButtonTitle: String
+    ) {
+        _date = date
+        _isActive = .constant(true)
+        _isEditorPresented = State(initialValue: presentationStyle == .inline)
+        _hasInlineBeenHiddenToSheetMode = State(initialValue: false)
+        self.title = title
+        self.subtitle = subtitle
+        self.icon = icon
+        self.accent = accent
+        self.presentationStyle = presentationStyle
+        self.showsToggle = false
+        self.editButtonTitle = editButtonTitle
     }
 
     public init(
@@ -64,6 +88,30 @@ public struct SimpleDateTimeInputCard: View {
         self.accent = accent
         self.presentationStyle = presentationStyle
         self.showsToggle = true
+        self.editButtonTitle = "Edit"
+    }
+
+    public init(
+        isActive: Binding<Bool>,
+        date: Binding<Date>,
+        title: String = "Date & Time",
+        subtitle: String = "Adjust when this entry was captured.",
+        icon: String = "calendar.badge.clock",
+        accent: Color = .accentColor,
+        presentationStyle: EditorPresentationStyle = .sheet,
+        editButtonTitle: String
+    ) {
+        _date = date
+        _isActive = isActive
+        _isEditorPresented = State(initialValue: presentationStyle == .inline && isActive.wrappedValue)
+        _hasInlineBeenHiddenToSheetMode = State(initialValue: false)
+        self.title = title
+        self.subtitle = subtitle
+        self.icon = icon
+        self.accent = accent
+        self.presentationStyle = presentationStyle
+        self.showsToggle = true
+        self.editButtonTitle = editButtonTitle
     }
 
     public var body: some View {
@@ -156,10 +204,6 @@ public struct SimpleDateTimeInputCard: View {
             }
         }
         .tint(accent)
-    }
-
-    private var editButtonTitle: String {
-        return "Edit"
     }
 
     private var isSheetPresentedBinding: Binding<Bool> {
