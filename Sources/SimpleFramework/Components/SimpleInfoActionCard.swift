@@ -90,6 +90,33 @@ public struct SimpleInfoActionCard: View {
     }
 }
 
+public extension SimpleInfoActionCard {
+    /// Creates an info action card styled for destructive actions.
+    /// - Parameters:
+    ///   - title: The destructive action title shown in the card.
+    ///   - subtitle: Supporting text describing the destructive action.
+    ///   - isActionEnabled: A Boolean value that determines whether the action button is enabled.
+    ///   - action: The closure to run when the destructive action button is tapped.
+    init(
+        destructiveTitle title: String,
+        subtitle: String,
+        isActionEnabled: Bool,
+        action: @escaping () -> Void
+    ) {
+        self.init(
+            title: title,
+            subtitle: subtitle,
+            systemImage: "trash.fill",
+            tint: .red,
+            actionTitle: "Delete",
+            actionSystemImage: "trash.fill",
+            actionTint: .red,
+            isActionEnabled: isActionEnabled,
+            action: action
+        )
+    }
+}
+
 #if DEBUG
     #Preview {
         VStack(spacing: 12) {
@@ -109,6 +136,13 @@ public struct SimpleInfoActionCard: View {
                 subtitle: "Notifications are enabled.",
                 systemImage: "checkmark.seal.fill",
                 tint: .green
+            )
+
+            SimpleInfoActionCard(
+                destructiveTitle: "Delete All Data",
+                subtitle: "Permanently remove all stored records.",
+                isActionEnabled: true,
+                action: {}
             )
         }
         .padding()
