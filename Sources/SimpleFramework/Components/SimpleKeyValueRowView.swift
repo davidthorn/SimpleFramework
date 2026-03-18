@@ -1,5 +1,5 @@
 //
-//  SimpleWorkoutDetailKeyValueRowView.swift
+//  SimpleKeyValueRowView.swift
 //  SimpleFramework
 //
 //  Created by David Thorn on 22.02.2026.
@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-/// A title/value row used in workout detail cards.
-public struct SimpleWorkoutDetailKeyValueRowView: View {
+/// A title/value row used in detail cards.
+public struct SimpleKeyValueRowView: View {
     private let title: String
     private let value: String
 
@@ -40,7 +40,7 @@ public struct SimpleWorkoutDetailKeyValueRowView: View {
 
 #if DEBUG
 #Preview {
-    SimpleWorkoutDetailKeyValueRowView(title: "Start", value: "Feb 3, 6:40 PM")
+    SimpleKeyValueRowView(title: "Start", value: "Feb 3, 6:40 PM")
         .padding()
         .background(Color.secondary.opacity(0.12))
 }

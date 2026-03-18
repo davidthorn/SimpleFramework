@@ -1,5 +1,5 @@
 //
-//  SimpleWorkoutDetailMetricRowView.swift
+//  SimpleMetricRowView.swift
 //  SimpleFramework
 //
 //  Created by David Thorn on 22.02.2026.
@@ -7,14 +7,14 @@
 
 import SwiftUI
 
-/// A metric row item used inside workout detail metric grids.
-public struct SimpleWorkoutDetailMetricRowView: View {
+/// A metric row item used inside detail metric grids.
+public struct SimpleMetricRowView: View {
     private let title: String
     private let value: String
     private let symbolName: String?
     private let accentColor: Color
 
-    /// Creates a workout metric row view.
+    /// Creates a metric row view.
     public init(title: String, value: String, symbolName: String?, accentColor: Color) {
         self.title = title
         self.value = value
@@ -52,7 +52,7 @@ public struct SimpleWorkoutDetailMetricRowView: View {
 
 #if DEBUG
 #Preview {
-    SimpleWorkoutDetailMetricRowView(
+    SimpleMetricRowView(
         title: "Weather",
         value: "Cloudy",
         symbolName: "cloud.fill",

@@ -1,5 +1,5 @@
 //
-//  SimpleWorkoutDetailCardView.swift
+//  SimpleDetailCardView.swift
 //  SimpleFramework
 //
 //  Created by David Thorn on 22.02.2026.
@@ -7,15 +7,15 @@
 
 import SwiftUI
 
-/// A reusable card container for workout detail sections.
-public struct SimpleWorkoutDetailCardView<Content: View>: View {
+/// A reusable card container for detail sections.
+public struct SimpleDetailCardView<Content: View>: View {
     private let title: String?
     private let accentColor: Color?
     private let actionTitle: String?
     private let action: (() -> Void)?
     private let content: Content
 
-    /// Creates a workout detail card.
+    /// Creates a detail card.
     public init(
         title: String? = nil,
         accentColor: Color? = nil,
@@ -59,7 +59,7 @@ public struct SimpleWorkoutDetailCardView<Content: View>: View {
     }
 }
 
-private extension SimpleWorkoutDetailCardView {
+private extension SimpleDetailCardView {
     @ViewBuilder
     var backgroundView: some View {
         if let accentColor {
@@ -89,11 +89,11 @@ private extension SimpleWorkoutDetailCardView {
 #if DEBUG
 #Preview {
     VStack(spacing: 12) {
-        SimpleWorkoutDetailCardView(title: "Overview") {
+        SimpleDetailCardView(title: "Overview") {
             Text("Card content")
         }
 
-        SimpleWorkoutDetailCardView(title: "Accent", accentColor: .orange) {
+        SimpleDetailCardView(title: "Accent", accentColor: .orange) {
             Text("Accent card")
         }
     }
