@@ -1,5 +1,5 @@
 //
-//  SimpleKeyValueRowView.swift
+//  SimpleKeyValueRow.swift
 //  SimpleFramework
 //
 //  Created by David Thorn on 22.02.2026.
@@ -8,7 +8,7 @@
 import SwiftUI
 
 /// A title/value row used in detail cards.
-public struct SimpleKeyValueRowView: View {
+public struct SimpleKeyValueRow: View {
     private let title: String
     private let value: String
 
@@ -40,7 +40,7 @@ public struct SimpleKeyValueRowView: View {
 
 #if DEBUG
 #Preview {
-    SimpleKeyValueRowView(title: "Start", value: "Feb 3, 6:40 PM")
+    SimpleKeyValueRow(title: "Start", value: "Feb 3, 6:40 PM")
         .padding()
         .background(Color.secondary.opacity(0.12))
 }

@@ -1,5 +1,5 @@
 //
-//  SimpleStatTileView.swift
+//  SimpleStatTile.swift
 //  SimpleFramework
 //
 //  Created by David Thorn on 22.02.2026.
@@ -8,7 +8,7 @@
 import SwiftUI
 
 /// A compact stat tile used in overview sections.
-public struct SimpleStatTileView: View {
+public struct SimpleStatTile: View {
     private let title: String
     private let value: String
     private let systemImage: String
@@ -49,13 +49,13 @@ public struct SimpleStatTileView: View {
 #if DEBUG
 #Preview {
     HStack(spacing: 12) {
-        SimpleStatTileView(
+        SimpleStatTile(
             title: "Distance",
             value: "4.20 km",
             systemImage: "map",
             tint: .blue
         )
-        SimpleStatTileView(
+        SimpleStatTile(
             title: "Duration",
             value: "32:10",
             systemImage: "timer",

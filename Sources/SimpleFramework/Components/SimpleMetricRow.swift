@@ -1,5 +1,5 @@
 //
-//  SimpleMetricRowView.swift
+//  SimpleMetricRow.swift
 //  SimpleFramework
 //
 //  Created by David Thorn on 22.02.2026.
@@ -8,7 +8,7 @@
 import SwiftUI
 
 /// A metric row item used inside detail metric grids.
-public struct SimpleMetricRowView: View {
+public struct SimpleMetricRow: View {
     private let title: String
     private let value: String
     private let symbolName: String?
@@ -52,7 +52,7 @@ public struct SimpleMetricRowView: View {
 
 #if DEBUG
 #Preview {
-    SimpleMetricRowView(
+    SimpleMetricRow(
         title: "Weather",
         value: "Cloudy",
         symbolName: "cloud.fill",

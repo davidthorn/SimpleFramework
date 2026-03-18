@@ -1,5 +1,5 @@
 //
-//  SimpleDetailCardView.swift
+//  SimpleDetailCard.swift
 //  SimpleFramework
 //
 //  Created by David Thorn on 22.02.2026.
@@ -8,7 +8,7 @@
 import SwiftUI
 
 /// A reusable card container for detail sections.
-public struct SimpleDetailCardView<Content: View>: View {
+public struct SimpleDetailCard<Content: View>: View {
     private let title: String?
     private let accentColor: Color?
     private let actionTitle: String?
@@ -59,7 +59,7 @@ public struct SimpleDetailCardView<Content: View>: View {
     }
 }
 
-private extension SimpleDetailCardView {
+private extension SimpleDetailCard {
     @ViewBuilder
     var backgroundView: some View {
         if let accentColor {
@@ -89,11 +89,11 @@ private extension SimpleDetailCardView {
 #if DEBUG
 #Preview {
     VStack(spacing: 12) {
-        SimpleDetailCardView(title: "Overview") {
+        SimpleDetailCard(title: "Overview") {
             Text("Card content")
         }
 
-        SimpleDetailCardView(title: "Accent", accentColor: .orange) {
+        SimpleDetailCard(title: "Accent", accentColor: .orange) {
             Text("Accent card")
         }
     }
