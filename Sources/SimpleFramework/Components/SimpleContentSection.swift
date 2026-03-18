@@ -7,7 +7,11 @@
 
 import SwiftUI
 
-/// A lightweight container that keeps related content visually grouped.
+/// A lightweight section container for grouping related content without adding its own card chrome.
+///
+/// Use `SimpleContentSection` when you want a titled block of mixed content, often in forms or editor-style
+/// screens. Unlike `SimpleDetailCard`, this type does not add a background card. Unlike `SimpleRouteGroup`,
+/// it is not specifically intended for navigation rows.
 public struct SimpleContentSection<Content: View>: View {
     /// The section title displayed above the content block.
     public let title: String
@@ -21,7 +25,7 @@ public struct SimpleContentSection<Content: View>: View {
     /// The section content.
     public let content: Content
 
-    /// Creates a new content section.
+    /// Creates a new content section for related content that should stay visually grouped.
     public init(
         title: String,
         header: String? = nil,

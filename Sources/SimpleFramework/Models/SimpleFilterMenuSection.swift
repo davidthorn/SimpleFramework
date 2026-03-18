@@ -8,6 +8,9 @@
 import Foundation
 
 /// A titled section of selectable filter menu options.
+///
+/// Use sections to organize related menu filters such as time range, status, or sort order. Each section
+/// should contain mutually related options that are easy to scan together.
 public struct SimpleFilterMenuSection: Identifiable {
     /// Stable identifier for the section.
     public let id: String
@@ -19,6 +22,11 @@ public struct SimpleFilterMenuSection: Identifiable {
     public let options: [SimpleFilterMenuOption]
 
     /// Creates a filter menu section.
+    ///
+    /// - Parameters:
+    ///   - id: A stable identifier for the section.
+    ///   - title: The title displayed above the section options.
+    ///   - options: The selectable options contained in the section.
     public init(
         id: String,
         title: String,

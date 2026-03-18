@@ -8,6 +8,10 @@
 import SwiftUI
 
 /// A reusable filter surface with search input and a primary segmented selection.
+///
+/// Use `SimpleSearchFilterCard` at the top of list-style screens when users need to combine free-text search
+/// with one primary segmented filter, such as type, status, or category. Secondary filters that do not fit
+/// comfortably in the page content can be paired with `SimpleFilterMenu` in the toolbar.
 public struct SimpleSearchFilterCard: View {
     private let searchText: Binding<String>
     private let searchTitle: String
@@ -19,6 +23,16 @@ public struct SimpleSearchFilterCard: View {
     private let filterOptions: [SimpleSegmentedChoiceOption]
 
     /// Creates a new search and segmented-filter card.
+    ///
+    /// - Parameters:
+    ///   - searchText: The bound free-text query.
+    ///   - searchTitle: The title shown above the search field.
+    ///   - searchPlaceholder: Placeholder text shown when the search field is empty.
+    ///   - searchHelperText: Optional supporting text shown below the search field.
+    ///   - searchTint: The accent tint used by the search field.
+    ///   - selectedFilterValue: The bound selected segmented-filter value.
+    ///   - filterTitle: The title shown above the segmented filter.
+    ///   - filterOptions: The available segmented-filter options.
     public init(
         searchText: Binding<String>,
         searchTitle: String,
@@ -70,13 +84,14 @@ public struct SimpleSearchFilterCard: View {
                 SimpleSearchFilterCard(
                     searchText: $searchText,
                     searchTitle: "Search",
-                    searchPlaceholder: "Find an item",
+                    searchPlaceholder: "Find a workout",
+                    searchHelperText: "Search works together with the selected filter.",
                     selectedFilterValue: $selectedValue,
-                    filterTitle: "Type",
+                    filterTitle: "Category",
                     filterOptions: [
                         SimpleSegmentedChoiceOption(title: "All", value: "all"),
-                        SimpleSegmentedChoiceOption(title: "Open", value: "open"),
-                        SimpleSegmentedChoiceOption(title: "Done", value: "done")
+                        SimpleSegmentedChoiceOption(title: "Run", value: "run"),
+                        SimpleSegmentedChoiceOption(title: "Ride", value: "ride")
                     ]
                 )
                 .padding()

@@ -7,7 +7,11 @@
 
 import SwiftUI
 
-/// A reusable card container for detail sections.
+/// A reusable, self-styled card container for detail content.
+///
+/// Use `SimpleDetailCard` when the content itself should live inside a rounded card with its own background
+/// and border. Unlike `SimpleContentSection`, this type adds card chrome. Unlike `SimpleRouteGroup`,
+/// it is not specifically for grouped navigation rows.
 public struct SimpleDetailCard<Content: View>: View {
     private let title: String?
     private let accentColor: Color?
@@ -15,7 +19,7 @@ public struct SimpleDetailCard<Content: View>: View {
     private let action: (() -> Void)?
     private let content: Content
 
-    /// Creates a detail card.
+    /// Creates a detail card for content that should appear inside its own visual card.
     public init(
         title: String? = nil,
         accentColor: Color? = nil,
