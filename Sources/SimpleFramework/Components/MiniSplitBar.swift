@@ -29,7 +29,7 @@ public struct MiniSplitBar: View {
         GeometryReader { proxy in
             ZStack(alignment: .leading) {
                 RoundedRectangle(cornerRadius: 6)
-                    .fill(Color(.quaternaryLabel))
+                    .fill(Color.secondary.opacity(0.18))
 
                 HStack(spacing: 0) {
                     RoundedRectangle(cornerRadius: 6)

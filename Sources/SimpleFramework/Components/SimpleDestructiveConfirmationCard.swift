@@ -10,6 +10,7 @@ import SwiftUI
 public struct SimpleDestructiveConfirmationCard: View {
     public let title: String
     public let message: String
+    public let cancelTitle: String
     public let confirmTitle: String
     public let tint: Color
     public let isDisabled: Bool
@@ -19,6 +20,7 @@ public struct SimpleDestructiveConfirmationCard: View {
     public init(
         title: String,
         message: String,
+        cancelTitle: String = String(localized: "Cancel"),
         confirmTitle: String = "Delete",
         tint: Color = .red,
         isDisabled: Bool = false,
@@ -27,6 +29,7 @@ public struct SimpleDestructiveConfirmationCard: View {
     ) {
         self.title = title
         self.message = message
+        self.cancelTitle = cancelTitle
         self.confirmTitle = confirmTitle
         self.tint = tint
         self.isDisabled = isDisabled
@@ -58,7 +61,7 @@ public struct SimpleDestructiveConfirmationCard: View {
 
             HStack(spacing: 10) {
                 SimpleActionButton(
-                    title: "Cancel",
+                    title: cancelTitle,
                     systemImage: "xmark",
                     tint: .gray,
                     style: .bordered,
