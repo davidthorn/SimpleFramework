@@ -55,7 +55,7 @@ public struct SimpleSummaryMetricPill: View {
         .padding(.vertical, 8)
         .background(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .fill(Color.white.opacity(0.70))
+                .fill(Color(uiColor: .secondarySystemBackground))
                 .overlay(
                     RoundedRectangle(cornerRadius: 14, style: .continuous)
                         .stroke(tint.opacity(0.18), lineWidth: 1)

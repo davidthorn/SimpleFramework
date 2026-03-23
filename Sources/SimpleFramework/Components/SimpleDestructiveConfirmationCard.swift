@@ -82,11 +82,12 @@ public struct SimpleDestructiveConfirmationCard: View {
         .padding(14)
         .background(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(Color.white)
+                .fill(Color(uiColor: .systemBackground))
                 .overlay(
                     RoundedRectangle(cornerRadius: 16, style: .continuous)
                         .stroke(tint.opacity(0.22), lineWidth: 1)
                 )
+                .shadow(color: Color.black.opacity(0.12), radius: 12, x: 0, y: 6)
         )
     }
 }

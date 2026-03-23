@@ -163,8 +163,8 @@ public struct FormTextEditorRowStyle: Sendable {
             inputVerticalPadding: 14,
             minimumEditorHeight: 140,
             cornerRadius: 10,
-            backgroundTopColor: .white.opacity(0.75),
-            backgroundBottomColor: .white.opacity(0.75),
+            backgroundTopColor: Color(uiColor: .secondarySystemBackground),
+            backgroundBottomColor: Color(uiColor: .secondarySystemBackground),
             borderLineWidth: 1,
             normalBorderColors: [
                 .primary.opacity(0.1),
