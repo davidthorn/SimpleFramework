@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-public struct SimpleElapsedHeroCard: View {
+public struct SimpleElapsedHeroCard<Content: View>: View {
     public let title: String
     public let subtitle: String
     public let elapsedText: String
@@ -15,6 +15,7 @@ public struct SimpleElapsedHeroCard: View {
     public let emptyMessage: String?
     public let systemImage: String
     public let tint: Color
+    private let content: Content
 
     public init(
         title: String,
@@ -23,7 +24,8 @@ public struct SimpleElapsedHeroCard: View {
         elapsedCaption: String,
         emptyMessage: String?,
         systemImage: String,
-        tint: Color
+        tint: Color,
+        @ViewBuilder content: () -> Content
     ) {
         self.title = title
         self.subtitle = subtitle
@@ -32,6 +34,7 @@ public struct SimpleElapsedHeroCard: View {
         self.emptyMessage = emptyMessage
         self.systemImage = systemImage
         self.tint = tint
+        self.content = content()
     }
 
     public var body: some View {
@@ -74,6 +77,8 @@ public struct SimpleElapsedHeroCard: View {
                         .foregroundStyle(.secondary)
                 }
             }
+
+            content
         }
         .padding(18)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -85,6 +90,30 @@ public struct SimpleElapsedHeroCard: View {
                         .stroke(tint.opacity(0.22), lineWidth: 1)
                 )
         )
+    }
+}
+
+extension SimpleElapsedHeroCard where Content == EmptyView {
+    public init(
+        title: String,
+        subtitle: String,
+        elapsedText: String,
+        elapsedCaption: String,
+        emptyMessage: String?,
+        systemImage: String,
+        tint: Color
+    ) {
+        self.init(
+            title: title,
+            subtitle: subtitle,
+            elapsedText: elapsedText,
+            elapsedCaption: elapsedCaption,
+            emptyMessage: emptyMessage,
+            systemImage: systemImage,
+            tint: tint
+        ) {
+            EmptyView()
+        }
     }
 }
 

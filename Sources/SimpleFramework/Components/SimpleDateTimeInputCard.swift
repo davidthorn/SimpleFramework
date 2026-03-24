@@ -187,13 +187,15 @@ public struct SimpleDateTimeInputCard: View {
 
     private var sheetEditor: some View {
         NavigationStack {
-            VStack(alignment: .leading, spacing: 14) {
-                header(showHideButton: false, showsToggleControl: false)
-                editorContent
-                Spacer()
+            ScrollView {
+                VStack(alignment: .leading, spacing: 14) {
+                    header(showHideButton: false, showsToggleControl: false)
+                    editorContent
+                }
+                .frame(maxWidth: .infinity, alignment: .topLeading)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
             .toolbar {
                 ToolbarItem(placement: doneToolbarPlacement) {
                     Button("Done") {
@@ -204,6 +206,8 @@ public struct SimpleDateTimeInputCard: View {
             }
         }
         .tint(accent)
+        .presentationDetents([.large])
+        .presentationDragIndicator(.visible)
     }
 
     private var isSheetPresentedBinding: Binding<Bool> {
@@ -285,7 +289,7 @@ public struct SimpleDateTimeInputCard: View {
 
                     Spacer(minLength: 12)
 
-                    if showHideButton == false {
+                    if showHideButton == false, isEditorPresented == false {
                         Text(editButtonTitle)
                             .font(.caption.weight(.semibold))
                             .foregroundStyle(accent)

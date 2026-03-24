@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 public struct SimpleActionButton: View {
     public enum Style: Sendable {
@@ -52,11 +53,24 @@ public struct SimpleActionButton: View {
 
     private var backgroundShape: some View {
         RoundedRectangle(cornerRadius: 12, style: .continuous)
-            .fill(style == .filled ? tint : Color.clear)
+            .fill(style == .filled ? tint : borderedBackgroundColor)
             .overlay(
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
                     .stroke(tint.opacity(style == .filled ? 0 : 0.35), lineWidth: 1)
             )
+    }
+
+    private var borderedBackgroundColor: Color {
+        Color(
+            uiColor: UIColor { traitCollection in
+                switch traitCollection.userInterfaceStyle {
+                case .dark:
+                    return UIColor(red: 0.16, green: 0.16, blue: 0.17, alpha: 0.96)
+                default:
+                    return UIColor(white: 1, alpha: 0.82)
+                }
+            }
+        )
     }
 }
 
